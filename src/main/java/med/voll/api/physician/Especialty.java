@@ -1,4 +1,4 @@
-package med.voll.api.medico;
+package med.voll.api.physician;
 
 public enum Especialty {
     ORTHOPEDIC,
