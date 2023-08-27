@@ -24,6 +24,14 @@ public class Physician {
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
     @Embedded
-    private Address direction;
+    private Address address;
 
+
+    public Physician(DataRegisterPhysician dataRegisterPhysician) {
+        this.name = dataRegisterPhysician.name();
+        this.email = dataRegisterPhysician.email();
+        this.document = dataRegisterPhysician.document();
+        this.specialty = dataRegisterPhysician.specialty();
+        this.address = new Address(dataRegisterPhysician.address());
+    }
 }
