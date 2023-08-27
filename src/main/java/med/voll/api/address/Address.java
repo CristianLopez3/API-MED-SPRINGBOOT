@@ -12,7 +12,7 @@ public class Address {
     private String street;
     private String district;
     private String city;
-    private Integer number;
+    private String number;
     private String complement;
 
     public Address(AddressData address) {
