@@ -17,6 +17,8 @@ public record DataRegisterPhysician(
         @NotBlank
         @Pattern(regexp = "\\d{4,10}")
         String document,
+        @NotBlank
+        String cellphone,
         @NotNull
         @Valid
         Specialty specialty,

@@ -21,6 +21,7 @@ public class Physician {
     private String name;
     private String email;
     private String document;
+    private String cellphone;
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
     @Embedded
@@ -31,6 +32,7 @@ public class Physician {
         this.name = dataRegisterPhysician.name();
         this.email = dataRegisterPhysician.email();
         this.document = dataRegisterPhysician.document();
+        this.cellphone = dataRegisterPhysician.cellphone();
         this.specialty = dataRegisterPhysician.specialty();
         this.address = new Address(dataRegisterPhysician.address());
     }
