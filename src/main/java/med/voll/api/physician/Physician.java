@@ -50,4 +50,9 @@ public class Physician {
             this.address = address.updateData(dataUpdatePhysician.addressData());
         }
     }
+
+    public void disablePhysician() {
+        this.active = false;
+    }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,8 @@ public class PhysicianController {
 
     @GetMapping
     public Page<DataListPhysician> listPhysician(@PageableDefault/*(size = 2, sort = "name")*/ Pageable pagination) {
-        return physicianRepository.findAll(pagination).map(DataListPhysician::new);
+        //return physicianRepository.findAll(pagination).map(DataListPhysician::new);
+        return physicianRepository.findByActiveTrue(pagination).map(DataListPhysician::new);
     }
 
     @PutMapping
@@ -40,12 +42,26 @@ public class PhysicianController {
         physician.updateData(dataUpdatePhysician);
     }
 
+    /**
+     * Delete a  nivel de base de datos
     @DeleteMapping("/{id}")
     @Transactional
     public void deletePhysician(@PathVariable Long id){
         Physician physician = physicianRepository.getReferenceById(id);
         physicianRepository.delete(physician);
 
+    }
+     */
+
+    /**
+     * Delete a nivel Logico
+     * @param id
+     */
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void deletePhysician(@PathVariable Long id){
+        Physician physician = physicianRepository.getReferenceById(id);
+        physician.disablePhysician();
     }
 
 }
