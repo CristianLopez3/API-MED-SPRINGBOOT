@@ -22,6 +22,7 @@ public class Physician {
     private String email;
     private String document;
     private String cellphone;
+    private Boolean active;
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
     @Embedded
@@ -29,6 +30,7 @@ public class Physician {
 
 
     public Physician(DataRegisterPhysician dataRegisterPhysician) {
+        this.active = true;
         this.name = dataRegisterPhysician.name();
         this.email = dataRegisterPhysician.email();
         this.document = dataRegisterPhysician.document();

@@ -29,7 +29,7 @@ public class PhysicianController {
     }
 
     @GetMapping
-    public Page<DataListPhysician> listPhysician(@PageableDefault(size = 2, sort = "name") Pageable pagination) {
+    public Page<DataListPhysician> listPhysician(@PageableDefault/*(size = 2, sort = "name")*/ Pageable pagination) {
         return physicianRepository.findAll(pagination).map(DataListPhysician::new);
     }
 
@@ -38,6 +38,14 @@ public class PhysicianController {
     public void updatePhysician(@RequestBody @Valid DataUpdatePhysician dataUpdatePhysician){
         Physician physician = physicianRepository.getReferenceById(dataUpdatePhysician.id());
         physician.updateData(dataUpdatePhysician);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void deletePhysician(@PathVariable Long id){
+        Physician physician = physicianRepository.getReferenceById(id);
+        physicianRepository.delete(physician);
+
     }
 
 }
