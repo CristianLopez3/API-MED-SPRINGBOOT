@@ -8,6 +8,7 @@ import med.voll.api.physician.PhysicianRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,13 @@ public class PhysicianController {
     }
 
     @GetMapping
-    public Page<DataListPhysician> listPhysician(Pageable pagination) {
+    public Page<DataListPhysician> listPhysician(@PageableDefault(size = 2, sort = "name") Pageable pagination) {
         return physicianRepository.findAll(pagination).map(DataListPhysician::new);
+    }
+
+    @PutMapping
+    public void updatePhysician(){
+
     }
 
 }
