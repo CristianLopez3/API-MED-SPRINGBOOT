@@ -1,10 +1,8 @@
 package med.voll.api.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.physician.DataListPhysician;
-import med.voll.api.physician.DataRegisterPhysician;
-import med.voll.api.physician.Physician;
-import med.voll.api.physician.PhysicianRepository;
+import med.voll.api.physician.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,8 +34,10 @@ public class PhysicianController {
     }
 
     @PutMapping
-    public void updatePhysician(){
-
+    @Transactional // method to update, is necessary start a transaction
+    public void updatePhysician(@RequestBody @Valid DataUpdatePhysician dataUpdatePhysician){
+        Physician physician = physicianRepository.getReferenceById(dataUpdatePhysician.id());
+        physician.updateData(dataUpdatePhysician);
     }
 
 }

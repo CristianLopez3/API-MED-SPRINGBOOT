@@ -22,4 +22,13 @@ public class Address {
         this.number = address.number();
         this.complement = address.complement();
     }
+
+    public Address updateData(AddressData address) {
+        this.street = address.street();
+        this.district = address.district();
+        this.city = address.city();
+        this.number = address.number();
+        this.complement = address.complement();
+        return this;
+    }
 }
