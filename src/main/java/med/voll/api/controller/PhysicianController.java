@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/medico")
@@ -23,9 +26,39 @@ public class PhysicianController {
      */
     @Autowired
     private PhysicianRepository physicianRepository;
+
+
+    /**
+     * Retornamos el código 201 - created, el cual nos retorna la url en la cual podemos
+     * encontrar el médico que acabamos de insertaar
+     * @param dataRegisterPhysician
+     * @param uriComponentsBuilder
+     * @return
+     */
+
     @PostMapping
-    public void registerPhysician(@RequestBody @Valid DataRegisterPhysician dataRegisterPhysician){
-        physicianRepository.save(new Physician((dataRegisterPhysician)));
+    public ResponseEntity<ShowDataPhysician> registerPhysician(@RequestBody @Valid DataRegisterPhysician dataRegisterPhysician
+    , UriComponentsBuilder uriComponentsBuilder){
+        Physician physician = physicianRepository.save(new Physician((dataRegisterPhysician)));
+        // GET http://localhost:8080/medico/{id}
+        ShowDataPhysician showDataPhysician = new ShowDataPhysician(
+                physician.getId(),
+                physician.getName(),
+                physician.getDocument(),
+                physician.getEmail(),
+                physician.getSpecialty(),
+
+                new AddressData(
+                        physician.getAddress().getStreet(),
+                        physician.getAddress().getDistrict(),
+                        physician.getAddress().getCity(),
+                        physician.getAddress().getNumber(),
+                        physician.getAddress().getComplement()
+                )
+        );
+        // URI uri = "http://localhost:8080/medico/"+physician.getId();
+        URI url = uriComponentsBuilder.path("/medico/{id}").buildAndExpand(physician.getId()).toUri();
+        return ResponseEntity.created(url).body(showDataPhysician);
     }
 
     @GetMapping
@@ -37,7 +70,7 @@ public class PhysicianController {
 
     @PutMapping
     @Transactional // method to update, is necessary start a transaction
-    public ResponseEntity updatePhysician(@RequestBody @Valid DataUpdatePhysician dataUpdatePhysician){
+    public ResponseEntity<ShowDataPhysician> updatePhysician(@RequestBody @Valid DataUpdatePhysician dataUpdatePhysician){
         Physician physician = physicianRepository.getReferenceById(dataUpdatePhysician.id());
         physician.updateData(dataUpdatePhysician);
         return ResponseEntity.ok(new ShowDataPhysician(
@@ -60,16 +93,6 @@ public class PhysicianController {
     }
 
 
-    /**
-     * Delete a  nivel de base de datos
-    @DeleteMapping("/{id}")
-    @Transactional
-    public void deletePhysician(@PathVariable Long id){
-        Physician physician = physicianRepository.getReferenceById(id);
-        physicianRepository.delete(physician);
-
-    }
-     */
 
     /**
      * Delete a nivel Logico
@@ -84,5 +107,46 @@ public class PhysicianController {
         physician.disablePhysician();
         return ResponseEntity.noContent().build();
     }
+
+
+    /**
+     * Retornamos los datos del nuevo médico ingresado por metodo post y devolvemos el
+     * codigo 200 de operación correcta ok.
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ShowDataPhysician> returnDataPhysician(@PathVariable  Long id){
+        Physician physician = physicianRepository.getReferenceById(id);
+        var dataPhysician = new ShowDataPhysician(
+                physician.getId(),
+                physician.getName(),
+                physician.getDocument(),
+                physician.getEmail(),
+                physician.getSpecialty(),
+
+                new AddressData(
+                        physician.getAddress().getStreet(),
+                        physician.getAddress().getDistrict(),
+                        physician.getAddress().getCity(),
+                        physician.getAddress().getNumber(),
+                        physician.getAddress().getComplement()
+                )
+        );
+        return  ResponseEntity.ok(dataPhysician);
+    }
+
+
+    /**
+     * Delete a  nivel de base de datos
+     @DeleteMapping("/{id}")
+     @Transactional
+     public void deletePhysician(@PathVariable Long id){
+     Physician physician = physicianRepository.getReferenceById(id);
+     physicianRepository.delete(physician);
+
+     }
+     */
+
 
 }
