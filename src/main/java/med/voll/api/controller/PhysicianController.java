@@ -2,15 +2,14 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import med.voll.api.address.AddressData;
 import med.voll.api.physician.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.crypto.Data;
-import java.util.List;
 
 @RestController
 @RequestMapping("/medico")
@@ -35,12 +34,31 @@ public class PhysicianController {
         return physicianRepository.findByActiveTrue(pagination).map(DataListPhysician::new);
     }
 
+
     @PutMapping
     @Transactional // method to update, is necessary start a transaction
-    public void updatePhysician(@RequestBody @Valid DataUpdatePhysician dataUpdatePhysician){
+    public ResponseEntity updatePhysician(@RequestBody @Valid DataUpdatePhysician dataUpdatePhysician){
         Physician physician = physicianRepository.getReferenceById(dataUpdatePhysician.id());
         physician.updateData(dataUpdatePhysician);
+        return ResponseEntity.ok(new ShowDataPhysician(
+                physician.getId(),
+                physician.getName(),
+                physician.getDocument(),
+                physician.getEmail(),
+                physician.getSpecialty(),
+
+                new AddressData(
+                            physician.getAddress().getStreet(),
+                            physician.getAddress().getDistrict(),
+                            physician.getAddress().getCity(),
+                            physician.getAddress().getNumber(),
+                            physician.getAddress().getComplement()
+                        )
+
+                ));
+
     }
+
 
     /**
      * Delete a  nivel de base de datos
@@ -55,13 +73,16 @@ public class PhysicianController {
 
     /**
      * Delete a nivel Logico
+     * No retornara contenido, para eso usamos la clase de spring
+     * ResponseEntity en donde le decimos que no retorne nada
      * @param id
      */
     @DeleteMapping("/{id}")
     @Transactional
-    public void deletePhysician(@PathVariable Long id){
+    public ResponseEntity deletePhysician(@PathVariable Long id){
         Physician physician = physicianRepository.getReferenceById(id);
         physician.disablePhysician();
+        return ResponseEntity.noContent().build();
     }
 
 }
