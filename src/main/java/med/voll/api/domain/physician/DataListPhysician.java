@@ -1,4 +1,4 @@
-package med.voll.api.physician;
+package med.voll.api.domain.physician;
 
 public record DataListPhysician(Long id, String name, String specialty, String document, String email) {
 
