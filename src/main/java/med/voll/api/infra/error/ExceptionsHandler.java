@@ -1,4 +1,4 @@
-package med.voll.api.infra;
+package med.voll.api.infra.error;
 
 
 import jakarta.persistence.EntityNotFoundException;
@@ -32,7 +32,6 @@ public class ExceptionsHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity tryError400(MethodArgumentNotValidException e){
-
         var errors = e.getFieldErrors().stream().map(DataErrorValidation::new).toList();
         return ResponseEntity.badRequest().body(errors);
     }

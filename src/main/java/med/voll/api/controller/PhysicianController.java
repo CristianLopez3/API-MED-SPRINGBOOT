@@ -93,7 +93,6 @@ public class PhysicianController {
     }
 
 
-
     /**
      * Delete a nivel Logico
      * No retornara contenido, para eso usamos la clase de spring
