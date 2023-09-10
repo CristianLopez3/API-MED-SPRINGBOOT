@@ -36,7 +36,6 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().build();
     }
-
     /**
      * Configuarmos los atributos de autenticacion para poder injectarla en nuestro controlador
      * de autenticacion
