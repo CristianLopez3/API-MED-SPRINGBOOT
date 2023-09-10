@@ -2,10 +2,12 @@ package med.voll.api.infra.security;
 
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 
-import med.voll.api.domain.user.User;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import med.voll.api.domain.user2.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class TokenService {
 
     public String generateToken(User user){
         try {
-            Algorithm algorithm = Algorithm.HMAC256("123456");
+            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
             return JWT.create()
                     .withIssuer("voll med")
                     .withSubject(user.getLogin()) // esto deberia ser generado dinamicamente
@@ -36,6 +38,27 @@ public class TokenService {
         } catch (JWTCreationException exception){
             throw new RuntimeException();
         }
+    }
+
+    public String getSubject(String token){
+
+        if(token == null){
+            throw new RuntimeException();
+        }
+
+        DecodedJWT jwtVerifier = null;
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+             jwtVerifier = JWT.require(algorithm)
+                    .withIssuer("voll med")
+                    .build()
+                    .verify(token);
+        } catch (JWTCreationException exception){
+            throw new RuntimeException();
+        }
+
+        return jwtVerifier.getSubject();
     }
 
     private Instant generateExpiratedDate(){

@@ -2,7 +2,7 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.domain.address.AddressData;
+import med.voll.api.domain.address2.AddressData;
 import med.voll.api.domain.physician.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/medico")
+    @RequestMapping("/medico")
 public class PhysicianController {
 
     /**
@@ -25,7 +25,7 @@ public class PhysicianController {
      * a la hora de hacer testing nos va a causar errores.
      */
     @Autowired
-    private PhysicianRepository physicianRepository;
+    private PhysicianRepository2 physicianRepository;
 
 
     /**
@@ -145,6 +145,19 @@ public class PhysicianController {
      physicianRepository.delete(physician);
 
      }
+     */
+
+
+    /*
+    Otra forma de restringir el acceso a ciertas funciones, según el perfil del usuario, es usar
+    una función de Spring Security conocida como Method Security, que funciona con el uso de anotaciones en los métodos:
+
+    @GetMapping("/{id}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity detallar(@PathVariable Long id) {
+        var medico = repository.getReferenceById(id);
+        return ResponseEntity.ok(new DatosDetalladoMedico(medico));
+    }
      */
 
 

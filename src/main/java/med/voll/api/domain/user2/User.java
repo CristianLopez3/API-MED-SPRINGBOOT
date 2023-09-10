@@ -1,4 +1,4 @@
-package med.voll.api.domain.user;
+package med.voll.api.domain.user2;
 
 import jakarta.persistence.*;
 import lombok.*;
