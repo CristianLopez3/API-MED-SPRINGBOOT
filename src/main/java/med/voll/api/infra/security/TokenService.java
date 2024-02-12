@@ -1,68 +1,61 @@
 package med.voll.api.infra.security;
 
-
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import med.voll.api.domain.user2.User;
+import med.voll.api.domain.usuarios.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-
-
-/**
- * Esta clase es la que nos va ayudar a generar los jwt(json web tokens)
- */
 @Service
 public class TokenService {
 
     @Value("${api.security.secret}")
-    private String jwtSecret;
+    private String apiSecret;
 
-    public String generateToken(User user){
+    public String generarToken(Usuario usuario) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+            Algorithm algorithm = Algorithm.HMAC256(apiSecret);
             return JWT.create()
                     .withIssuer("voll med")
-                    .withSubject(user.getLogin()) // esto deberia ser generado dinamicamente
-                    .withExpiresAt(generateExpiratedDate())
-                    .withClaim("id", user.getId())
+                    .withSubject(usuario.getLogin())
+                    .withClaim("id", usuario.getId())
+                    .withExpiresAt(generarFechaExpiracion())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
             throw new RuntimeException();
         }
     }
 
-    public String getSubject(String token){
-
-        if(token == null){
+    public String getSubject(String token) {
+        if (token == null) {
             throw new RuntimeException();
         }
-
-        DecodedJWT jwtVerifier = null;
-
+        DecodedJWT verifier = null;
         try {
-            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
-             jwtVerifier = JWT.require(algorithm)
+            Algorithm algorithm = Algorithm.HMAC256(apiSecret); // validando firma
+            verifier = JWT.require(algorithm)
                     .withIssuer("voll med")
                     .build()
                     .verify(token);
-        } catch (JWTCreationException exception){
-            throw new RuntimeException();
+            verifier.getSubject();
+        } catch (JWTVerificationException exception) {
+            System.out.println(exception.toString());
         }
-
-        return jwtVerifier.getSubject();
+        if (verifier.getSubject() == null) {
+            throw new RuntimeException("Verifier invalido");
+        }
+        return verifier.getSubject();
     }
 
-    private Instant generateExpiratedDate(){
-        return LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.of("-05:00"));
+    private Instant generarFechaExpiracion() {
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-05:00"));
     }
 
 }
